@@ -18,63 +18,50 @@ const categoryColors: Record<string, string> = {
 
 <BaseLayout title="首页">
 
-  <!-- ===== 全屏星空 Hero ===== -->
+  <!-- ===== 全屏动态宇宙 Hero ===== -->
   <section class="hero">
-    <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
+    <canvas id="space-canvas" aria-hidden="true"></canvas>
 
-    <!-- 星云光晕 -->
-    <div class="nebula nebula--1" aria-hidden="true"></div>
-    <div class="nebula nebula--2" aria-hidden="true"></div>
-    <div class="nebula nebula--3" aria-hidden="true"></div>
+    <!-- CSS 动态星云层（叠加在 canvas 上增强效果） -->
+    <div class="nebula-layer" aria-hidden="true">
+      <div class="n n1"></div>
+      <div class="n n2"></div>
+      <div class="n n3"></div>
+      <div class="n n4"></div>
+    </div>
 
     <div class="hero__content">
-      <div class="hero__avatar" aria-hidden="true">🎖️</div>
+      <div class="hero__avatar">🎖️</div>
       <h1 class="hero__title">
-        你好，我是 <span class="hero__name-accent">晨思</span>
+        你好，我是 <span class="hero__name-grad">晨思</span>
       </h1>
-      <p class="hero__sub">
-        退伍老兵 · 电子信息工程 · AI 开发者
-      </p>
+      <p class="hero__sub">退伍老兵 · 电子信息工程 · AI 开发者</p>
       <p class="hero__desc">
         用系统化思维构建 AI 时代的个人竞争力<br />
-        这里记录我的学习、项目与成长
+        记录学习、项目与成长
       </p>
       <div class="hero__cta">
-        <a href="/posts" class="btn-primary">阅读文章</a>
+        <a href="/posts"    class="btn-primary">阅读文章</a>
         <a href="/projects" class="btn-ghost">查看项目</a>
       </div>
     </div>
 
-    <!-- 滚动提示 -->
     <div class="scroll-hint" aria-hidden="true">
       <span class="scroll-hint__line"></span>
-      <span class="scroll-hint__text">向下滚动</span>
     </div>
   </section>
 
   <!-- ===== 统计条 ===== -->
   <div class="stats-bar">
     <div class="container--wide">
-      <div class="stats-bar__inner">
-        <a href="/posts" class="stat">
-          <span class="stat__num">{totalPosts}</span>
-          <span class="stat__label">篇文章</span>
-        </a>
+      <div class="stats-inner">
+        <a href="/posts"      class="stat"><span class="stat-n">{totalPosts}</span><span class="stat-l">篇文章</span></a>
         <div class="stat-sep"></div>
-        <a href="/categories" class="stat">
-          <span class="stat__num">{allCategories.length}</span>
-          <span class="stat__label">个分类</span>
-        </a>
+        <a href="/categories" class="stat"><span class="stat-n">{allCategories.length}</span><span class="stat-l">个分类</span></a>
         <div class="stat-sep"></div>
-        <a href="/tags" class="stat">
-          <span class="stat__num">{allTags.length}</span>
-          <span class="stat__label">个标签</span>
-        </a>
+        <a href="/tags"       class="stat"><span class="stat-n">{allTags.length}</span><span class="stat-l">个标签</span></a>
         <div class="stat-sep"></div>
-        <div class="stat">
-          <span class="stat__num">429</span>
-          <span class="stat__label">次反思</span>
-        </div>
+        <div class="stat"><span class="stat-n">429</span><span class="stat-l">次反思</span></div>
       </div>
     </div>
   </div>
@@ -108,222 +95,332 @@ const categoryColors: Record<string, string> = {
 
 </BaseLayout>
 
-<!-- 星空 canvas 脚本 -->
 <script>
-const canvas = document.getElementById('starfield') as HTMLCanvasElement;
-if (canvas) {
-  const ctx = canvas.getContext('2d')!;
-  let stars: { x: number; y: number; r: number; o: number; speed: number }[] = [];
+// ============================================================
+// 宇宙动态背景：彩色星星 + 流星 + 星云粒子
+// ============================================================
+const canvas = document.getElementById('space-canvas') as HTMLCanvasElement;
+const ctx    = canvas.getContext('2d')!;
 
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+// 星星颜色（模拟真实恒星光谱色）
+const STAR_COLORS = [
+  [210, 230, 255],  // 蓝白
+  [255, 255, 255],  // 纯白
+  [255, 248, 210],  // 黄白
+  [255, 225, 180],  // 橙
+  [180, 210, 255],  // 蓝
+  [255, 200, 200],  // 红
+  [200, 255, 240],  // 青
+  [220, 200, 255],  // 紫
+];
 
-  function initStars() {
-    stars = [];
-    const count = Math.floor((canvas.width * canvas.height) / 3000);
-    for (let i = 0; i < count; i++) {
-      stars.push({
-        x:     Math.random() * canvas.width,
-        y:     Math.random() * canvas.height,
-        r:     Math.random() * 1.4 + 0.2,
-        o:     Math.random() * 0.8 + 0.2,
-        speed: Math.random() * 0.008 + 0.002,
-      });
-    }
-  }
-
-  let frame = 0;
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    frame += 0.01;
-    for (const s of stars) {
-      const opacity = s.o * (0.6 + 0.4 * Math.sin(frame * s.speed * 100));
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-
-      // 亮星加十字光芒
-      if (s.r > 1.2) {
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = `rgba(200,220,255,${opacity * 0.8})`;
-      } else {
-        ctx.shadowBlur = 3;
-        ctx.shadowColor = `rgba(200,220,255,${opacity * 0.4})`;
-      }
-      ctx.fillStyle = `rgba(210,225,255,${opacity})`;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-    requestAnimationFrame(draw);
-  }
-
-  resize();
-  initStars();
-  draw();
-  window.addEventListener('resize', () => { resize(); initStars(); });
+interface Star {
+  x: number; y: number; r: number;
+  color: number[]; phase: number; speed: number;
 }
+
+interface Shooter {
+  x: number; y: number;
+  vx: number; vy: number;
+  len: number; op: number; life: number;
+}
+
+let stars: Star[] = [];
+let shooters: Shooter[] = [];
+let W = 0, H = 0, frame = 0;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  initStars();
+}
+
+function initStars() {
+  stars = [];
+  const n = Math.floor((W * H) / 2200);
+  for (let i = 0; i < n; i++) {
+    const c = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() < 0.03 ? Math.random() * 2 + 1.5   // 少量大星
+        : Math.random() < 0.15 ? Math.random() * 0.8 + 0.8 // 中等
+        : Math.random() * 0.5 + 0.2,                        // 小星
+      color: c,
+      phase: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.015 + 0.005,
+    });
+  }
+}
+
+function spawnShooter() {
+  const angle = (Math.random() * 30 + 10) * Math.PI / 180;
+  const speed = Math.random() * 10 + 8;
+  shooters.push({
+    x: Math.random() * W * 0.8,
+    y: Math.random() * H * 0.4,
+    vx:  speed * Math.cos(angle),
+    vy:  speed * Math.sin(angle),
+    len: Math.random() * 120 + 60,
+    op:  1, life: 1,
+  });
+}
+
+function drawBackground() {
+  // 深空渐变背景（非纯黑）
+  const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
+  bg.addColorStop(0,   '#04001a');
+  bg.addColorStop(0.3, '#000d25');
+  bg.addColorStop(0.6, '#001008');
+  bg.addColorStop(1,   '#080018');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function drawStars() {
+  frame += 0.4;
+  for (const s of stars) {
+    const flicker = 0.55 + 0.45 * Math.sin(frame * s.speed + s.phase);
+    const op = flicker;
+    const [r, g, b] = s.color;
+
+    // 大星加十字光芒
+    if (s.r > 1.4) {
+      const glow = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 6);
+      glow.addColorStop(0, `rgba(${r},${g},${b},${op * 0.6})`);
+      glow.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 十字光芒
+      ctx.save();
+      ctx.globalAlpha = op * 0.5;
+      ctx.strokeStyle = `rgba(${r},${g},${b},1)`;
+      ctx.lineWidth = 0.5;
+      const arm = s.r * 8;
+      ctx.beginPath();
+      ctx.moveTo(s.x - arm, s.y); ctx.lineTo(s.x + arm, s.y);
+      ctx.moveTo(s.x, s.y - arm); ctx.lineTo(s.x, s.y + arm);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${r},${g},${b},${op})`;
+    ctx.fill();
+  }
+}
+
+function drawShooters() {
+  for (let i = shooters.length - 1; i >= 0; i--) {
+    const s = shooters[i];
+    s.x += s.vx; s.y += s.vy; s.life -= 0.018; s.op = s.life;
+    if (s.life <= 0) { shooters.splice(i, 1); continue; }
+
+    const tail = { x: s.x - s.vx * (s.len / Math.hypot(s.vx, s.vy)), y: s.y - s.vy * (s.len / Math.hypot(s.vx, s.vy)) };
+    const grad = ctx.createLinearGradient(tail.x, tail.y, s.x, s.y);
+    grad.addColorStop(0, `rgba(255,255,255,0)`);
+    grad.addColorStop(0.7, `rgba(200,220,255,${s.op * 0.6})`);
+    grad.addColorStop(1,   `rgba(255,255,255,${s.op})`);
+
+    ctx.save();
+    ctx.globalAlpha = s.op;
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(180,210,255,0.8)';
+    ctx.beginPath();
+    ctx.moveTo(tail.x, tail.y);
+    ctx.lineTo(s.x, s.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+let lastShooter = 0;
+function animate(ts: number) {
+  ctx.clearRect(0, 0, W, H);
+  drawBackground();
+  drawStars();
+  drawShooters();
+
+  if (ts - lastShooter > 3200 + Math.random() * 4000) {
+    spawnShooter();
+    lastShooter = ts;
+  }
+  requestAnimationFrame(animate);
+}
+
+resize();
+requestAnimationFrame(animate);
+window.addEventListener('resize', resize);
 </script>
 
 <style>
 /* ===== Hero ===== */
 .hero {
-  position: relative;
-  width: 100%; height: 100vh;
+  position: relative; width: 100%; height: 100vh;
   display: flex; align-items: center; justify-content: center;
-  overflow: hidden; background: #000;
+  overflow: hidden;
 }
 
-.starfield {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
+#space-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
 }
 
-/* 星云光晕 */
-.nebula {
+/* CSS 星云层（叠在 canvas 上，增加色彩层次） */
+.nebula-layer { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+.n {
   position: absolute; border-radius: 50%;
-  filter: blur(80px); pointer-events: none;
+  filter: blur(90px); mix-blend-mode: screen;
 }
-.nebula--1 {
-  width: 600px; height: 400px;
-  top: 10%; left: 15%;
-  background: radial-gradient(ellipse, rgba(124,58,237,0.18) 0%, transparent 70%);
+.n1 {
+  width: 700px; height: 500px; top: -10%; left: -5%;
+  background: radial-gradient(ellipse, rgba(120,40,200,0.35) 0%, transparent 70%);
+  animation: drift1 18s ease-in-out infinite alternate;
 }
-.nebula--2 {
-  width: 500px; height: 350px;
-  bottom: 15%; right: 10%;
-  background: radial-gradient(ellipse, rgba(34,197,94,0.12) 0%, transparent 70%);
+.n2 {
+  width: 600px; height: 450px; bottom: -5%; right: -8%;
+  background: radial-gradient(ellipse, rgba(20,120,220,0.3) 0%, transparent 70%);
+  animation: drift2 22s ease-in-out infinite alternate;
 }
-.nebula--3 {
-  width: 400px; height: 300px;
-  top: 40%; left: 50%;
-  transform: translateX(-50%);
-  background: radial-gradient(ellipse, rgba(96,165,250,0.08) 0%, transparent 70%);
+.n3 {
+  width: 400px; height: 300px; top: 30%; right: 15%;
+  background: radial-gradient(ellipse, rgba(0,200,120,0.2) 0%, transparent 70%);
+  animation: drift3 16s ease-in-out infinite alternate;
+}
+.n4 {
+  width: 350px; height: 280px; bottom: 20%; left: 20%;
+  background: radial-gradient(ellipse, rgba(200,80,60,0.18) 0%, transparent 70%);
+  animation: drift4 20s ease-in-out infinite alternate;
 }
 
+@keyframes drift1 { from{transform:translate(0,0) scale(1)} to{transform:translate(60px,40px) scale(1.15)} }
+@keyframes drift2 { from{transform:translate(0,0) scale(1)} to{transform:translate(-50px,-30px) scale(1.1)} }
+@keyframes drift3 { from{transform:translate(0,0) scale(1)} to{transform:translate(30px,-40px) scale(0.9)} }
+@keyframes drift4 { from{transform:translate(0,0) scale(1)} to{transform:translate(-40px,30px) scale(1.1)} }
+
+/* Hero 内容 */
 .hero__content {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
-  text-align: center; gap: 1rem; padding: 2rem 1.5rem;
+  text-align: center; gap: 0.9rem; padding: 2rem 1.5rem;
+  /* 轻微背景保证文字可读 */
+  background: rgba(0,0,0,0.15);
+  backdrop-filter: blur(1px);
+  border-radius: 2rem;
 }
 
-.hero__avatar { font-size: 4rem; line-height: 1; margin-bottom: 0.5rem; }
+.hero__avatar { font-size: 4rem; line-height: 1; }
 
 .hero__title {
   font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 800; letter-spacing: -0.02em;
-  color: var(--text); line-height: 1.15;
+  font-weight: 800; letter-spacing: -0.02em; color: #fff; line-height: 1.15;
 }
 
-.hero__name-accent {
-  background: linear-gradient(135deg, #4ade80 0%, #60a5fa 50%, #a78bfa 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+.hero__name-grad {
+  background: linear-gradient(135deg, #4ade80 0%, #60a5fa 45%, #c084fc 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(96,165,250,0.5));
 }
 
-.hero__sub {
-  font-size: 0.95rem; color: var(--text-3);
-  letter-spacing: 0.05em;
-}
-
-.hero__desc {
-  font-size: 1rem; color: var(--text-2);
-  line-height: 1.8; max-width: 420px;
-}
+.hero__sub  { font-size: 0.9rem;  color: rgba(255,255,255,0.5); letter-spacing: 0.06em; }
+.hero__desc { font-size: 0.92rem; color: rgba(255,255,255,0.65); line-height: 1.8; max-width: 380px; }
 
 .hero__cta { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem; }
 
 .btn-primary {
-  padding: 0.6rem 1.5rem; border-radius: var(--radius-md);
-  font-size: 0.875rem; font-weight: 600;
-  background: var(--text); color: var(--bg);
+  padding: 0.6rem 1.5rem; border-radius: 0.5rem;
+  font-size: 0.875rem; font-weight: 600; letter-spacing: 0.02em;
+  background: rgba(255,255,255,0.95); color: #0a0a0a;
   transition: opacity 0.2s, transform 0.2s;
 }
-.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
 
 .btn-ghost {
-  padding: 0.6rem 1.5rem; border-radius: var(--radius-md);
+  padding: 0.6rem 1.5rem; border-radius: 0.5rem;
   font-size: 0.875rem; font-weight: 600;
-  border: 1px solid var(--border-2); color: var(--text-2);
+  border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.75);
+  backdrop-filter: blur(4px); background: rgba(255,255,255,0.05);
   transition: border-color 0.2s, color 0.2s;
 }
-.btn-ghost:hover { border-color: var(--text-3); color: var(--text); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.45); color: #fff; }
 
 /* 滚动提示 */
 .scroll-hint {
-  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  z-index: 2;
 }
 .scroll-hint__line {
-  display: block; width: 1px; height: 40px;
-  background: linear-gradient(to bottom, transparent, var(--text-3));
-  animation: drop 1.8s ease-in-out infinite;
+  display: block; width: 1px; height: 48px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.4));
+  animation: scrollDrop 2s ease-in-out infinite;
 }
-.scroll-hint__text { font-size: 0.65rem; color: var(--text-3); letter-spacing: 0.15em; text-transform: uppercase; }
-@keyframes drop { 0%,100%{opacity:0; transform:scaleY(0); transform-origin:top;} 50%{opacity:1; transform:scaleY(1);} }
+@keyframes scrollDrop {
+  0%,100%{opacity:0; transform:scaleY(0.3); transform-origin:top;}
+  60%{opacity:1; transform:scaleY(1);}
+}
 
 /* ===== Stats Bar ===== */
 .stats-bar {
   background: var(--bg-2);
-  border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
-.stats-bar__inner {
+.stats-inner {
   display: flex; align-items: center;
-  justify-content: center; flex-wrap: wrap;
-  padding: 1.25rem 0;
+  justify-content: center; flex-wrap: wrap; padding: 1.25rem 0;
 }
 .stat {
   display: flex; flex-direction: column; align-items: center;
-  padding: 0.25rem 2.5rem; gap: 0.15rem;
+  padding: 0.25rem 2.5rem; gap: 0.12rem;
   text-decoration: none; transition: opacity 0.15s;
 }
-a.stat:hover { opacity: 0.75; }
-.stat__num { font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1; }
-.stat__label { font-size: 0.7rem; color: var(--text-3); letter-spacing: 0.08em; }
+a.stat:hover { opacity: 0.65; }
+.stat-n { font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1; }
+.stat-l { font-size: 0.68rem; color: var(--text-3); letter-spacing: 0.08em; }
 .stat-sep { width: 1px; height: 2rem; background: var(--border); }
 
 /* ===== Section ===== */
 .section { padding: 5rem 0; }
 
 .sec-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2rem; }
-.sec-title { font-size: 0.7rem; font-weight: 700; color: var(--text-3); letter-spacing: 0.15em; text-transform: uppercase; }
+.sec-title { font-size: 0.68rem; font-weight: 700; color: var(--text-3); letter-spacing: 0.15em; text-transform: uppercase; }
 .sec-more { font-size: 0.8rem; color: var(--text-3); transition: color 0.15s; }
 .sec-more:hover { color: var(--text); }
 
-/* ===== Post Cards — Linear style ===== */
+/* ===== Post Cards ===== */
 .posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden;
 }
-
 .post-card {
   display: flex; flex-direction: column; gap: 0.6rem;
   padding: 1.5rem; background: var(--bg-2);
-  transition: background 0.15s;
-  text-decoration: none;
+  text-decoration: none; transition: background 0.15s;
 }
 .post-card:hover { background: var(--bg-3); }
-
 .post-card__top { display: flex; align-items: center; justify-content: space-between; }
 .post-card__date { font-size: 0.72rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
-
 .post-card__title { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.45; }
 .post-card__desc {
   font-size: 0.8rem; color: var(--text-3); line-height: 1.6; flex: 1;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.post-card__arrow { font-size: 0.75rem; color: var(--text-3); margin-top: 0.5rem; transition: color 0.15s; }
+.post-card__arrow { font-size: 0.72rem; color: var(--text-3); margin-top: 0.5rem; transition: color 0.15s; }
 .post-card:hover .post-card__arrow { color: var(--green); }
 
-@media (max-width: 600px) {
+:global(.main-content) { padding-top: 3.5rem; }
+
+@media (max-width: 580px) {
   .stat { padding: 0.25rem 1.5rem; }
   .posts-grid { grid-template-columns: 1fr; }
+  .hero__content { border-radius: 1.25rem; }
 }
 </style>

@@ -6,17 +6,17 @@
   --purple:      #a78bfa;
   --purple-dark: #7c3aed;
 
-  --bg:          #000000;
-  --bg-2:        #0a0a0a;
-  --bg-3:        #111111;
-  --bg-card:     #0f0f0f;
+  --bg:          #04001a;
+  --bg-2:        #080020;
+  --bg-3:        #0e0028;
+  --bg-card:     #080020;
 
   --text:        #ffffff;
   --text-2:      #a1a1aa;
   --text-3:      #52525b;
 
-  --border:      #1f1f1f;
-  --border-2:    #2a2a2a;
+  --border:      #1a0a35;
+  --border-2:    #250f48;
 
   --font-sans: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
