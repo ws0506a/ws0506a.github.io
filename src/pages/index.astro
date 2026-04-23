@@ -7,6 +7,11 @@ const recentPosts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 5);
 
+// 统计数据
+const totalPosts = allPosts.length;
+const allTags = [...new Set(allPosts.flatMap(p => p.data.tags))];
+const allCategories = [...new Set(allPosts.map(p => p.data.category))];
+
 const categoryColors: Record<string, string> = {
   AI: 'blue', EE: 'blue', Growth: 'green', Project: 'green', Other: 'gray',
 };
@@ -22,15 +27,38 @@ const categoryColors: Record<string, string> = {
       <h1 class="hero__name">晨思</h1>
       <p class="hero__tagline">退伍老兵 · 电子信息工程 · AI 自学者</p>
       <p class="hero__desc">
-        用系统化思维，在 AI 时代构建个人竞争力。<br />
-        记录学习、复盘成长、输出思考。
+        用系统化思维，在 AI 时代构建个人竞争力<br />
+        记录学习、复盘成长、输出思考
       </p>
-      <div class="hero__tags">
-        <span class="badge badge--green">🎖️ 2024 退役</span>
-        <span class="badge badge--blue">🤖 AI 开发</span>
-        <span class="badge badge--green">📈 280+ 日课</span>
+      <div class="hero__actions">
+        <a href="/posts" class="btn btn--primary">浏览文章</a>
+        <a href="/about" class="btn btn--ghost">关于我</a>
       </div>
     </div>
+
+    <!-- 统计栏（参考 daydust）-->
+    <div class="hero__stats">
+      <a href="/posts" class="hero__stat">
+        <span class="hero__stat-num">{totalPosts}</span>
+        <span class="hero__stat-label">文章</span>
+      </a>
+      <div class="hero__stat-divider"></div>
+      <a href="/categories" class="hero__stat">
+        <span class="hero__stat-num">{allCategories.length}</span>
+        <span class="hero__stat-label">分类</span>
+      </a>
+      <div class="hero__stat-divider"></div>
+      <a href="/tags" class="hero__stat">
+        <span class="hero__stat-num">{allTags.length}</span>
+        <span class="hero__stat-label">标签</span>
+      </a>
+      <div class="hero__stat-divider"></div>
+      <div class="hero__stat">
+        <span class="hero__stat-num">280+</span>
+        <span class="hero__stat-label">日课天</span>
+      </div>
+    </div>
+
     <div class="hero__scroll" aria-hidden="true">↓</div>
   </section>
 
@@ -39,50 +67,61 @@ const categoryColors: Record<string, string> = {
     <div class="container">
       <div class="section__header">
         <h2 class="section__title">最近文章</h2>
-        <a href="/posts" class="section__more">查看全部 →</a>
+        <a href="/posts" class="section__more">全部文章 →</a>
       </div>
 
       {recentPosts.length === 0 ? (
-        <p class="empty">暂无文章，敬请期待 🚀</p>
+        <p class="empty">文章正在路上，敬请期待 🚀</p>
       ) : (
-        <ul class="post-list">
+        <div class="post-list">
           {recentPosts.map(post => (
-            <li class="post-item">
-              <div class="post-item__left">
-                <span class={`badge badge--${categoryColors[post.data.category] ?? 'gray'}`}>
-                  {post.data.category}
-                </span>
-                <a href={`/posts/${post.id}`} class="post-item__title">
-                  {post.data.title}
-                </a>
+            <article class="post-card">
+              <div class="post-card__header">
+                <div class="post-card__meta">
+                  <span class={`badge badge--${categoryColors[post.data.category] ?? 'gray'}`}>
+                    {post.data.category}
+                  </span>
+                  <time datetime={post.data.pubDate.toISOString()} class="post-card__date">
+                    {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                  </time>
+                </div>
+                {post.data.featured && <span class="post-card__featured">精选</span>}
               </div>
-              <time
-                datetime={post.data.pubDate.toISOString()}
-                class="post-item__date"
-              >
-                {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
-              </time>
-            </li>
+              <h3 class="post-card__title">
+                <a href={`/posts/${post.id}`}>{post.data.title}</a>
+              </h3>
+              <p class="post-card__desc">{post.data.description}</p>
+              {post.data.tags.length > 0 && (
+                <div class="post-card__tags">
+                  {post.data.tags.slice(0, 4).map(tag => (
+                    <a href={`/tags/${tag}`} class="post-card__tag">#{tag}</a>
+                  ))}
+                </div>
+              )}
+            </article>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   </section>
 
   <!-- About snippet -->
-  <section class="section section--about">
+  <section class="section">
     <div class="container">
       <div class="about-card">
-        <h2 class="about-card__title">关于我</h2>
-        <p class="about-card__text">
-          电子信息工程大三学生，2024 年 3 月退役。目前专注 AI 开发学习，
-          目标毕业进入 AI 初创公司。公众号「AI成长引擎」230+ 篇，总阅读 3.6 万。
-        </p>
-        <div class="about-card__links">
-          <a href="/about" class="about-card__link">了解更多 →</a>
-          <a href="https://github.com/ws0506a" target="_blank" rel="noopener" class="about-card__link about-card__link--muted">
-            GitHub ↗
-          </a>
+        <div class="about-card__left">
+          <span class="about-card__emoji">🎖️</span>
+        </div>
+        <div class="about-card__right">
+          <h2 class="about-card__title">关于我</h2>
+          <p class="about-card__text">
+            电子信息工程大三，2024 年 3 月退役。专注 AI 开发，目标毕业入职 AI 初创公司。
+            公众号「AI成长引擎」230+ 篇，总阅读 3.6 万。
+          </p>
+          <div class="about-card__links">
+            <a href="/about" class="about-link">了解更多 →</a>
+            <a href="https://github.com/ws0506a" target="_blank" rel="noopener" class="about-link about-link--dim">GitHub ↗</a>
+          </div>
         </div>
       </div>
     </div>
@@ -100,24 +139,19 @@ const categoryColors: Record<string, string> = {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 6rem 1.25rem 4rem;
+  padding: 6rem 1.25rem 8rem;
   overflow: hidden;
 }
 
-/* CSS 星空背景 */
 .hero__stars {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(74, 222, 128, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(74, 222, 128, 0.03) 0%, transparent 40%);
+    radial-gradient(ellipse at 20% 50%, rgba(74,222,128,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(96,165,250,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(74,222,128,0.03) 0%, transparent 40%);
 }
-.hero__stars::before,
-.hero__stars::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+.hero__stars::before, .hero__stars::after {
+  content: ''; position: absolute; inset: 0;
   background-image:
     radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
     radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
@@ -142,172 +176,157 @@ const categoryColors: Record<string, string> = {
     radial-gradient(1px 1px at 62% 18%, rgba(255,255,255,0.4) 0%, transparent 100%),
     radial-gradient(1.5px 1.5px at 5%  90%, rgba(255,255,255,0.3) 0%, transparent 100%),
     radial-gradient(1px 1px at 95% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 50% 5%,  rgba(74, 222, 128, 0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 76% 48%, rgba(96, 165, 250, 0.5) 0%, transparent 100%);
+    radial-gradient(1px 1px at 50% 5%,  rgba(74,222,128,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 76% 48%, rgba(96,165,250,0.5) 0%, transparent 100%);
 }
 
 .hero__content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
 }
 
-.hero__avatar {
-  font-size: 5rem;
-  line-height: 1;
-  margin-bottom: 0.5rem;
-  filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.3));
-}
+.hero__avatar { font-size: 4.5rem; line-height: 1; filter: drop-shadow(0 0 20px rgba(74,222,128,0.3)); }
 
 .hero__name {
   font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  color: var(--text);
-  text-shadow: 0 0 30px rgba(74, 222, 128, 0.2);
+  font-weight: 900; letter-spacing: 0.08em;
+  color: var(--text); text-shadow: 0 0 30px rgba(74,222,128,0.2);
 }
 
-.hero__tagline {
-  font-size: 1rem;
-  color: var(--text-2);
-  letter-spacing: 0.05em;
-}
+.hero__tagline { font-size: 0.95rem; color: var(--text-2); letter-spacing: 0.04em; }
 
-.hero__desc {
-  font-size: 0.95rem;
-  color: var(--text-2);
-  line-height: 1.8;
-  max-width: 420px;
-}
+.hero__desc { font-size: 0.9rem; color: var(--text-2); line-height: 1.8; max-width: 380px; }
 
-.hero__tags {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 0.5rem;
+.hero__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; margin-top: 0.4rem; }
+
+.btn {
+  display: inline-flex; align-items: center;
+  padding: 0.55rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem; font-weight: 600;
+  text-decoration: none; transition: all 0.2s;
+  border: 1px solid transparent;
 }
+.btn--primary {
+  background: var(--green-dark); color: #0d1117;
+  box-shadow: 0 0 16px rgba(34,197,94,0.25);
+}
+.btn--primary:hover { background: var(--green); transform: translateY(-1px); color: #0d1117; }
+.btn--ghost { border-color: var(--border-2); color: var(--text-2); }
+.btn--ghost:hover { border-color: var(--green-dark); color: var(--green); }
+
+/* 统计栏 */
+.hero__stats {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; gap: 0;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-top: 2.5rem;
+  overflow: hidden;
+}
+.hero__stat {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0.9rem 1.75rem; gap: 0.2rem;
+  text-decoration: none; transition: background 0.15s;
+  cursor: default;
+}
+a.hero__stat:hover { background: var(--bg-3); }
+.hero__stat-num {
+  font-size: 1.5rem; font-weight: 800; line-height: 1;
+  color: var(--green);
+}
+.hero__stat-label { font-size: 0.72rem; color: var(--text-3); letter-spacing: 0.05em; }
+.hero__stat-divider { width: 1px; height: 2.5rem; background: var(--border); flex-shrink: 0; }
 
 .hero__scroll {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--text-3);
-  font-size: 1.2rem;
-  animation: bounce 2s ease-in-out infinite;
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  color: var(--text-3); font-size: 1.1rem;
+  animation: bounce 2.2s ease-in-out infinite;
 }
 @keyframes bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(6px); }
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+  50%       { transform: translateX(-50%) translateY(7px); opacity: 1; }
 }
 
 /* ===== Sections ===== */
 .section { padding: 4rem 0; border-top: 1px solid var(--border); }
-.section--about { padding: 3rem 0; }
 
 .section__header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 1.75rem;
+  display: flex; align-items: baseline;
+  justify-content: space-between; margin-bottom: 1.75rem;
 }
 .section__title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-2);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-size: 0.8rem;
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--text-3); letter-spacing: 0.1em; text-transform: uppercase;
 }
-.section__more {
-  font-size: 0.85rem;
-  color: var(--green);
-  font-weight: 500;
-}
+.section__more { font-size: 0.85rem; color: var(--green); font-weight: 500; }
 .section__more:hover { color: var(--green-light); }
 
-/* ===== Post List ===== */
-.post-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+/* ===== Post Cards（参考 rain1andsnow2a 风格 + daydust 信息密度）===== */
+.post-list { display: flex; flex-direction: column; gap: 0; }
 
-.post-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 0;
+.post-card {
+  padding: 1.25rem 0;
   border-bottom: 1px solid var(--border);
-  transition: background 0.15s;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  transition: all 0.15s;
 }
-.post-item:last-child { border-bottom: none; }
+.post-card:last-child { border-bottom: none; }
+.post-card:hover { padding-left: 0.5rem; }
 
-.post-item__left {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-width: 0;
+.post-card__header {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 0.75rem;
+}
+.post-card__meta { display: flex; align-items: center; gap: 0.5rem; }
+.post-card__date { font-size: 0.78rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.post-card__featured {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+  color: var(--green); border: 1px solid rgba(74,222,128,0.3);
+  padding: 0.1rem 0.4rem; border-radius: var(--radius-sm);
 }
 
-.post-item__title {
-  font-size: 0.95rem;
-  color: var(--text);
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color 0.15s;
-}
-.post-item__title:hover { color: var(--green); }
+.post-card__title { font-size: 1rem; font-weight: 700; line-height: 1.4; }
+.post-card__title a { color: var(--text); text-decoration: none; transition: color 0.15s; }
+.post-card__title a:hover { color: var(--green); }
 
-.post-item__date {
-  font-size: 0.8rem;
-  color: var(--text-3);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  flex-shrink: 0;
+.post-card__desc {
+  font-size: 0.85rem; color: var(--text-2); line-height: 1.65;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
 }
+
+.post-card__tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.post-card__tag {
+  font-size: 0.72rem; color: var(--text-3);
+  text-decoration: none; transition: color 0.15s;
+}
+.post-card__tag:hover { color: var(--green); }
 
 /* ===== About Card ===== */
 .about-card {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem 2rem;
+  display: flex; gap: 1.5rem; align-items: flex-start;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.75rem;
 }
-.about-card__title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 0.75rem;
-}
-.about-card__text {
-  font-size: 0.9rem;
-  color: var(--text-2);
-  line-height: 1.75;
-  margin-bottom: 1.25rem;
-}
+.about-card__left { font-size: 3rem; line-height: 1; flex-shrink: 0; }
+.about-card__title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
+.about-card__text { font-size: 0.875rem; color: var(--text-2); line-height: 1.75; margin-bottom: 1rem; }
 .about-card__links { display: flex; gap: 1.25rem; }
-.about-card__link {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--green);
-}
-.about-card__link--muted { color: var(--text-3); }
-.about-card__link--muted:hover { color: var(--text-2); }
+.about-link { font-size: 0.85rem; font-weight: 600; color: var(--green); }
+.about-link--dim { color: var(--text-3); }
+.about-link--dim:hover { color: var(--text-2); }
 
-/* ===== Empty ===== */
 .empty { color: var(--text-3); font-size: 0.9rem; padding: 2rem 0; }
 
-/* ===== Main offset for fixed header ===== */
 :global(.main-content) { padding-top: 3.5rem; }
 
-@media (max-width: 540px) {
-  .post-item { flex-wrap: wrap; gap: 0.4rem; }
-  .post-item__date { margin-left: auto; }
-  .about-card { padding: 1.25rem; }
+@media (max-width: 560px) {
+  .hero__stats { flex-wrap: wrap; justify-content: center; border-radius: var(--radius-md); }
+  .hero__stat { padding: 0.75rem 1.25rem; }
+  .hero__stat-divider { display: none; }
+  .about-card { flex-direction: column; gap: 0.75rem; padding: 1.25rem; }
+  .about-card__left { font-size: 2rem; }
 }
 </style>

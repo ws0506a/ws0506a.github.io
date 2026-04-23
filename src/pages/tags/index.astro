@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+
+const tagMap = new Map<string, number>();
+for (const post of allPosts) {
+  for (const tag of post.data.tags) {
+    tagMap.set(tag, (tagMap.get(tag) ?? 0) + 1);
+  }
+}
+
+const tags = [...tagMap.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .map(([name, count]) => ({ name, count }));
+
+const maxCount = Math.max(...tags.map(t => t.count), 1);
+---
+
+<BaseLayout title="标签" description="按标签浏览文章">
+  <div class="page">
+    <div class="container">
+      <header class="page-header">
+        <h1 class="page-header__title">标签</h1>
+        <p class="page-header__sub">共 {tags.length} 个标签 · {allPosts.length} 篇文章</p>
+      </header>
+
+      {tags.length === 0 ? (
+        <p class="empty">暂无标签</p>
+      ) : (
+        <div class="tag-cloud">
+          {tags.map(({ name, count }) => {
+            const weight = count / maxCount;
+            const size = 0.8 + weight * 0.6;
+            return (
+              <a
+                href={`/tags/${name}`}
+                class="tag-item"
+                style={`font-size: ${size}rem; opacity: ${0.5 + weight * 0.5};`}
+              >
+                #{name}
+                <span class="tag-item__count">{count}</span>
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.page { padding: 5rem 0 4rem; }
+
+.page-header { margin-bottom: 3rem; }
+.page-header__title { font-size: 1.75rem; font-weight: 800; color: var(--text); margin-bottom: 0.25rem; }
+.page-header__sub { font-size: 0.875rem; color: var(--text-3); }
+
+.tag-cloud {
+  display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; align-items: baseline;
+}
+
+.tag-item {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  color: var(--text-2); text-decoration: none;
+  font-weight: 500; transition: color 0.15s;
+  line-height: 1.4;
+}
+.tag-item:hover { color: var(--green); }
+.tag-item__count {
+  font-size: 0.7em;
+  color: var(--text-3);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 0.05em 0.4em;
+  border-radius: var(--radius-sm);
+}
+
+.empty { color: var(--text-3); padding: 2rem 0; }
+</style>
