@@ -31,15 +31,10 @@ const categoryColors: Record<string, string> = {
     </div>
 
     <div class="hero__content">
-      <div class="hero__avatar">🎖️</div>
+      <img src="/avatar.jpg" alt="长青" class="hero__avatar-img" />
       <h1 class="hero__title">
-        你好，我是 <span class="hero__name-grad">晨思</span>
+        <span class="hero__name-grad">长青</span>
       </h1>
-      <p class="hero__sub">退伍老兵 · 电子信息工程 · AI 开发者</p>
-      <p class="hero__desc">
-        用系统化思维构建 AI 时代的个人竞争力<br />
-        记录学习、项目与成长
-      </p>
       <div class="hero__cta">
         <a href="/posts"    class="btn-primary">阅读文章</a>
         <a href="/projects" class="btn-ghost">查看项目</a>
@@ -316,7 +311,12 @@ window.addEventListener('resize', resize);
   border-radius: 2rem;
 }
 
-.hero__avatar { font-size: 4rem; line-height: 1; }
+.hero__avatar-img {
+  width: 96px; height: 96px; border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.15);
+  box-shadow: 0 0 24px rgba(96,165,250,0.35);
+}
 
 .hero__title {
   font-size: clamp(2rem, 5vw, 3.5rem);

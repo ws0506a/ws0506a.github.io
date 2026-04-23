@@ -10,7 +10,7 @@ const pathname = Astro.url.pathname;
 
 <header class="header">
   <div class="header__inner container--wide">
-    <a href="/" class="logo">晨思</a>
+    <a href="/" class="logo">长青</a>
     <nav class="nav">
       {navLinks.map(({ href, label }) => {
         const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
