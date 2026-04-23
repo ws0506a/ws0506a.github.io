@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
@@ -9,127 +8,138 @@ const sortedPosts = allPosts.sort(
 );
 
 const categories = ['全部', 'AI', 'EE', 'Growth', 'Project', 'Other'] as const;
+
+const colorMap: Record<string, string> = {
+  AI: 'blue', EE: 'blue', Growth: 'green', Project: 'green', Other: 'gray',
+};
 ---
 
-<BaseLayout title="文章列表" description="所有技术文章和成长笔记">
-  <div class="posts-page">
+<BaseLayout title="文章" description="所有文章">
+  <div class="page">
     <div class="container">
       <header class="page-header">
-        <h1 class="page-header__title">📝 全部文章</h1>
-        <p class="page-header__desc">共 {sortedPosts.length} 篇，持续更新中</p>
+        <h1 class="page-header__title">文章</h1>
+        <p class="page-header__sub">共 {sortedPosts.length} 篇</p>
       </header>
 
-      <div class="category-tabs" role="tablist" aria-label="文章分类">
+      <div class="category-tabs">
         {categories.map(cat => (
-          <button
-            class:list={['category-tab', { 'category-tab--active': cat === '全部' }]}
-            data-category={cat}
-            role="tab"
-          >
+          <button class:list={['tab', { 'tab--active': cat === '全部' }]} data-category={cat}>
             {cat}
           </button>
         ))}
       </div>
 
-      <div class="posts-grid" id="posts-grid">
+      <ul class="post-list" id="posts-grid">
         {sortedPosts.map(post => (
-          <div class="post-item" data-category={post.data.category}>
-            <PostCard
-              title={post.data.title}
-              description={post.data.description}
-              pubDate={post.data.pubDate}
-              slug={post.id}
-              tags={post.data.tags}
-              category={post.data.category}
-              featured={post.data.featured}
-            />
-          </div>
+          <li class="post-item" data-category={post.data.category}>
+            <div class="post-item__left">
+              <span class={`badge badge--${colorMap[post.data.category] ?? 'gray'}`}>
+                {post.data.category}
+              </span>
+              <a href={`/posts/${post.id}`} class="post-item__title">{post.data.title}</a>
+              {post.data.featured && <span class="post-item__star">⭐</span>}
+            </div>
+            <time datetime={post.data.pubDate.toISOString()} class="post-item__date">
+              {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+            </time>
+          </li>
         ))}
-      </div>
+      </ul>
 
       {sortedPosts.length === 0 && (
-        <div class="empty-state">
-          <p>暂无文章，敬请期待 🚀</p>
-        </div>
+        <p class="empty">暂无文章，敬请期待 🚀</p>
       )}
     </div>
   </div>
 </BaseLayout>
 
 <script>
-const tabs = document.querySelectorAll<HTMLButtonElement>('.category-tab');
+const tabs = document.querySelectorAll<HTMLButtonElement>('.tab');
 const items = document.querySelectorAll<HTMLElement>('.post-item');
 
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     const cat = tab.dataset.category!;
-    tabs.forEach(t => t.classList.remove('category-tab--active'));
-    tab.classList.add('category-tab--active');
+    tabs.forEach(t => t.classList.remove('tab--active'));
+    tab.classList.add('tab--active');
     items.forEach(item => {
-      const show = cat === '全部' || item.dataset.category === cat;
-      item.style.display = show ? '' : 'none';
+      item.style.display = cat === '全部' || item.dataset.category === cat ? '' : 'none';
     });
   });
 });
 </script>
 
 <style>
-.posts-page { padding: 2.5rem 0 4rem; }
+.page { padding: 5rem 0 4rem; }
 
 .page-header { margin-bottom: 2rem; }
-.page-header__title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 0.35rem;
-}
-.page-header__desc { color: var(--text-3); font-size: 0.9rem; }
+.page-header__title { font-size: 1.75rem; font-weight: 800; color: var(--text); margin-bottom: 0.25rem; }
+.page-header__sub { font-size: 0.875rem; color: var(--text-3); }
 
 .category-tabs {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
   margin-bottom: 2rem;
-  padding-bottom: 1rem;
+  padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--border);
 }
-
-.category-tab {
-  padding: 0.35rem 0.9rem;
+.tab {
+  padding: 0.3rem 0.8rem;
   border-radius: var(--radius-md);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
   border: 1px solid var(--border);
-  background: var(--bg);
+  background: transparent;
   color: var(--text-2);
   transition: all 0.15s;
 }
-.category-tab:hover {
-  border-color: var(--green);
-  color: var(--green-dark);
+.tab:hover { border-color: var(--green); color: var(--green); }
+.tab--active { background: var(--green-dark); border-color: var(--green-dark); color: #000; font-weight: 600; }
+
+.post-list { list-style: none; }
+
+.post-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
 }
-.category-tab--active {
-  background: var(--green-dark);
-  border-color: var(--green-dark);
-  color: white;
+.post-item:last-child { border-bottom: none; }
+
+.post-item__left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
 }
 
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.25rem;
+.post-item__title {
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
 }
+.post-item__title:hover { color: var(--green); }
+.post-item__star { font-size: 0.75rem; flex-shrink: 0; }
 
-.empty-state {
-  text-align: center;
-  padding: 3rem;
+.post-item__date {
+  font-size: 0.8rem;
   color: var(--text-3);
-  background: var(--bg-2);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-lg);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 600px) {
-  .posts-grid { grid-template-columns: 1fr; }
+.empty { color: var(--text-3); padding: 2rem 0; }
+
+@media (max-width: 480px) {
+  .post-item { flex-wrap: wrap; }
+  .post-item__date { margin-left: auto; }
 }
 </style>

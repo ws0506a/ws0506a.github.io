@@ -12,7 +12,7 @@ interface Props {
 
 const {
   title,
-  description = 'AI成长引擎 — 退伍大学生 × AI × 成长系统',
+  description = '晨思 — 退伍大学生 × AI × 成长系统',
   ogImage,
   math = false,
 } = Astro.props;
@@ -47,11 +47,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       />
     )}
 
-    <title>{title} | AI成长引擎</title>
+    <title>{title} | 晨思</title>
   </head>
   <body>
     <Header />
-    <main>
+    <main class="main-content">
       <slot />
     </main>
     <Footer />

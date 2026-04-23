@@ -1,270 +1,313 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
-const featuredPosts = sortedPosts.filter(p => p.data.featured);
-const recentPosts   = sortedPosts.slice(0, 6);
+const recentPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+
+const categoryColors: Record<string, string> = {
+  AI: 'blue', EE: 'blue', Growth: 'green', Project: 'green', Other: 'gray',
+};
 ---
 
-<BaseLayout
-  title="首页"
-  description="AI成长引擎 — 退伍大学生 × AI × 成长系统，分享 AI 开发、电子工程与个人成长"
->
+<BaseLayout title="首页" description="晨思 — 退伍大学生 × AI × 成长系统">
+
   <!-- Hero -->
   <section class="hero">
-    <div class="container">
-      <div class="hero__badge">
-        <span class="badge badge--green">🎖️ 退伍老兵</span>
-        <span class="badge badge--blue">🤖 AI 开发者</span>
-        <span class="badge badge--green">📈 成长系统</span>
-      </div>
-      <h1 class="hero__title">
-        AI<span class="hero__title-accent">成长</span>引擎
-      </h1>
-      <p class="hero__subtitle">
-        退伍大学生 × 电子信息工程 × AI 自学之路<br />
-        用系统化思维，构建 AI 时代的个人竞争力
+    <div class="hero__stars" aria-hidden="true"></div>
+    <div class="hero__content">
+      <div class="hero__avatar" aria-hidden="true">🎖️</div>
+      <h1 class="hero__name">晨思</h1>
+      <p class="hero__tagline">退伍老兵 · 电子信息工程 · AI 自学者</p>
+      <p class="hero__desc">
+        用系统化思维，在 AI 时代构建个人竞争力。<br />
+        记录学习、复盘成长、输出思考。
       </p>
-      <div class="hero__actions">
-        <a href="/posts" class="btn btn--primary">浏览全部文章</a>
-        <a href="/about" class="btn btn--outline">了解我</a>
-      </div>
-      <div class="hero__stats">
-        <div class="hero__stat">
-          <span class="hero__stat-num" style="color: var(--green)">280+</span>
-          <span class="hero__stat-label">日课天数</span>
-        </div>
-        <div class="hero__stat-divider"></div>
-        <div class="hero__stat">
-          <span class="hero__stat-num" style="color: var(--blue)">429</span>
-          <span class="hero__stat-label">反思次数</span>
-        </div>
-        <div class="hero__stat-divider"></div>
-        <div class="hero__stat">
-          <span class="hero__stat-num" style="color: var(--green)">230+</span>
-          <span class="hero__stat-label">公众号文章</span>
-        </div>
+      <div class="hero__tags">
+        <span class="badge badge--green">🎖️ 2024 退役</span>
+        <span class="badge badge--blue">🤖 AI 开发</span>
+        <span class="badge badge--green">📈 280+ 日课</span>
       </div>
     </div>
+    <div class="hero__scroll" aria-hidden="true">↓</div>
   </section>
-
-  <!-- Featured Posts -->
-  {featuredPosts.length > 0 && (
-    <section class="section">
-      <div class="container">
-        <h2 class="section__title">
-          <span class="section__title-accent">⭐</span> 精选文章
-        </h2>
-        <div class="posts-grid">
-          {featuredPosts.map(post => (
-            <PostCard
-              title={post.data.title}
-              description={post.data.description}
-              pubDate={post.data.pubDate}
-              slug={post.id}
-              tags={post.data.tags}
-              category={post.data.category}
-              featured={true}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
 
   <!-- Recent Posts -->
   <section class="section">
     <div class="container">
       <div class="section__header">
-        <h2 class="section__title">
-          <span class="section__title-accent">📝</span> 最新文章
-        </h2>
+        <h2 class="section__title">最近文章</h2>
         <a href="/posts" class="section__more">查看全部 →</a>
       </div>
+
       {recentPosts.length === 0 ? (
-        <div class="empty-state">
-          <p>文章正在路上，敬请期待 🚀</p>
-        </div>
+        <p class="empty">暂无文章，敬请期待 🚀</p>
       ) : (
-        <div class="posts-grid">
+        <ul class="post-list">
           {recentPosts.map(post => (
-            <PostCard
-              title={post.data.title}
-              description={post.data.description}
-              pubDate={post.data.pubDate}
-              slug={post.id}
-              tags={post.data.tags}
-              category={post.data.category}
-            />
+            <li class="post-item">
+              <div class="post-item__left">
+                <span class={`badge badge--${categoryColors[post.data.category] ?? 'gray'}`}>
+                  {post.data.category}
+                </span>
+                <a href={`/posts/${post.id}`} class="post-item__title">
+                  {post.data.title}
+                </a>
+              </div>
+              <time
+                datetime={post.data.pubDate.toISOString()}
+                class="post-item__date"
+              >
+                {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+              </time>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   </section>
+
+  <!-- About snippet -->
+  <section class="section section--about">
+    <div class="container">
+      <div class="about-card">
+        <h2 class="about-card__title">关于我</h2>
+        <p class="about-card__text">
+          电子信息工程大三学生，2024 年 3 月退役。目前专注 AI 开发学习，
+          目标毕业进入 AI 初创公司。公众号「AI成长引擎」230+ 篇，总阅读 3.6 万。
+        </p>
+        <div class="about-card__links">
+          <a href="/about" class="about-card__link">了解更多 →</a>
+          <a href="https://github.com/ws0506a" target="_blank" rel="noopener" class="about-card__link about-card__link--muted">
+            GitHub ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </BaseLayout>
 
 <style>
 /* ===== Hero ===== */
 .hero {
-  padding: 5rem 0 4rem;
-  text-align: center;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--green) 4%, var(--bg)) 0%,
-    var(--bg) 100%
-  );
-  border-bottom: 1px solid var(--border);
-}
-
-.hero__badge {
+  position: relative;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  text-align: center;
+  padding: 6rem 1.25rem 4rem;
+  overflow: hidden;
 }
 
-.hero__title {
+/* CSS 星空背景 */
+.hero__stars {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(74, 222, 128, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(74, 222, 128, 0.03) 0%, transparent 40%);
+}
+.hero__stars::before,
+.hero__stars::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 5%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,0.4) 0%, transparent 100%);
+}
+.hero__stars::after {
+  background-image:
+    radial-gradient(1px 1px at 18% 8%,  rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 42%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 72% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 62% 18%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 5%  90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 95% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 5%,  rgba(74, 222, 128, 0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 76% 48%, rgba(96, 165, 250, 0.5) 0%, transparent 100%);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero__avatar {
+  font-size: 5rem;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.3));
+}
+
+.hero__name {
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 900;
-  line-height: 1.15;
+  letter-spacing: 0.08em;
   color: var(--text);
-  letter-spacing: -0.02em;
-  margin-bottom: 1rem;
+  text-shadow: 0 0 30px rgba(74, 222, 128, 0.2);
 }
 
-.hero__title-accent {
-  background: linear-gradient(135deg, var(--green), var(--blue));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero__subtitle {
-  font-size: 1.05rem;
+.hero__tagline {
+  font-size: 1rem;
   color: var(--text-2);
-  line-height: 1.75;
-  max-width: 500px;
-  margin: 0 auto 2rem;
+  letter-spacing: 0.05em;
 }
 
-.hero__actions {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 3rem;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.65rem 1.5rem;
-  border-radius: var(--radius-md);
+.hero__desc {
   font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s;
-  border: 2px solid transparent;
-}
-.btn--primary {
-  background: linear-gradient(135deg, var(--green), var(--green-dark));
-  color: white;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--green) 35%, transparent);
-}
-.btn--primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--green) 40%, transparent);
-  color: white;
-}
-.btn--outline {
-  border-color: var(--border-2);
   color: var(--text-2);
-  background: var(--bg);
-}
-.btn--outline:hover {
-  border-color: var(--blue);
-  color: var(--blue-dark);
+  line-height: 1.8;
+  max-width: 420px;
 }
 
-.hero__stats {
-  display: inline-flex;
-  align-items: center;
-  gap: 2rem;
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1rem 2rem;
+.hero__tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
-.hero__stat { text-align: center; }
-.hero__stat-num {
-  display: block;
-  font-size: 1.75rem;
-  font-weight: 800;
-  line-height: 1;
-}
-.hero__stat-label {
-  font-size: 0.75rem;
+
+.hero__scroll {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   color: var(--text-3);
-  margin-top: 0.2rem;
+  font-size: 1.2rem;
+  animation: bounce 2s ease-in-out infinite;
 }
-.hero__stat-divider {
-  width: 1px;
-  height: 2.5rem;
-  background: var(--border);
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(6px); }
 }
 
 /* ===== Sections ===== */
-.section { padding: 3.5rem 0; }
-.section + .section { border-top: 1px solid var(--border); }
+.section { padding: 4rem 0; border-top: 1px solid var(--border); }
+.section--about { padding: 3rem 0; }
 
 .section__header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+.section__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+.section__more {
+  font-size: 0.85rem;
+  color: var(--green);
+  font-weight: 500;
+}
+.section__more:hover { color: var(--green-light); }
+
+/* ===== Post List ===== */
+.post-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+
+.post-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.post-item:last-child { border-bottom: none; }
+
+.post-item__left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
 }
 
-.section__title {
-  font-size: 1.35rem;
+.post-item__title {
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+.post-item__title:hover { color: var(--green); }
+
+.post-item__date {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ===== About Card ===== */
+.about-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 2rem;
+}
+.about-card__title {
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
-.section__header .section__title { margin-bottom: 0; }
-
-.section__title-accent { margin-right: 0.25rem; }
-
-.section__more {
+.about-card__text {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+}
+.about-card__links { display: flex; gap: 1.25rem; }
+.about-card__link {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--green-dark);
+  color: var(--green);
 }
+.about-card__link--muted { color: var(--text-3); }
+.about-card__link--muted:hover { color: var(--text-2); }
 
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.25rem;
-}
+/* ===== Empty ===== */
+.empty { color: var(--text-3); font-size: 0.9rem; padding: 2rem 0; }
 
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-  color: var(--text-3);
-  background: var(--bg-2);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-lg);
-}
+/* ===== Main offset for fixed header ===== */
+:global(.main-content) { padding-top: 3.5rem; }
 
-@media (max-width: 600px) {
-  .hero { padding: 3rem 0 2.5rem; }
-  .hero__stats { gap: 1.25rem; padding: 0.75rem 1.25rem; }
-  .hero__stat-num { font-size: 1.4rem; }
-  .posts-grid { grid-template-columns: 1fr; }
+@media (max-width: 540px) {
+  .post-item { flex-wrap: wrap; gap: 0.4rem; }
+  .post-item__date { margin-left: auto; }
+  .about-card { padding: 1.25rem; }
 }
 </style>
