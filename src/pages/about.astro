@@ -1,0 +1,279 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="关于我" description="退伍大学生 × 电子信息工程 × AI 自学路上的思考者">
+  <div class="about-page">
+    <div class="container">
+      <!-- Profile -->
+      <section class="profile">
+        <div class="profile__avatar" aria-hidden="true">🎖️</div>
+        <div class="profile__info">
+          <h1 class="profile__name">changqingws</h1>
+          <p class="profile__tagline">退伍大学生 · 电子信息工程 · AI 开发学习者</p>
+          <div class="profile__badges">
+            <span class="badge badge--green">📍 中国石油大学</span>
+            <span class="badge badge--blue">🎓 大三在读</span>
+            <span class="badge badge--green">🎖️ 2024.3 退役</span>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- About Me -->
+      <section class="about-section">
+        <h2 class="about-section__title">👋 关于我</h2>
+        <div class="prose">
+          <p>
+            你好，我是 changqingws。电子信息工程大三学生，2024 年 3 月从部队退役，
+            目前专注于 AI 开发学习，目标是毕业后进入 AI 初创公司。
+          </p>
+          <p>
+            部队经历让我养成了极强的自律习惯——日课坚持 280+ 天，反思记录 429 次。
+            我相信，用系统化的方式对待成长，比天赋更靠谱。
+          </p>
+          <p>
+            这个博客是我的思考输出阵地，记录 AI 开发学习过程、电子工程技术笔记，
+            以及退伍转型路上的个人成长复盘。
+          </p>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="about-section">
+        <h2 class="about-section__title">📊 数据看板</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-card__num" style="color: var(--green)">280+</span>
+            <span class="stat-card__label">日课连续天数</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__num" style="color: var(--blue)">429</span>
+            <span class="stat-card__label">反思次数</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__num" style="color: var(--green)">230+</span>
+            <span class="stat-card__label">公众号文章</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__num" style="color: var(--blue)">3.6万</span>
+            <span class="stat-card__label">公众号总阅读</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="about-section">
+        <h2 class="about-section__title">🛠️ 技能矩阵</h2>
+        <div class="skills-grid">
+          <div class="skill-group">
+            <h3 class="skill-group__title">AI 工具链</h3>
+            <div class="skill-tags">
+              {['Python', 'LangChain', 'OpenAI API', 'Ollama', 'RAG', 'Prompt Engineering'].map(s => (
+                <span class="badge badge--blue">{s}</span>
+              ))}
+            </div>
+          </div>
+          <div class="skill-group">
+            <h3 class="skill-group__title">电子工程</h3>
+            <div class="skill-tags">
+              {['信号处理', 'MATLAB', 'C/C++', '嵌入式', '电路设计'].map(s => (
+                <span class="badge badge--green">{s}</span>
+              ))}
+            </div>
+          </div>
+          <div class="skill-group">
+            <h3 class="skill-group__title">开发工具</h3>
+            <div class="skill-tags">
+              {['Git', 'VS Code', 'Linux', 'Astro', 'Markdown'].map(s => (
+                <span class="badge badge--gray">{s}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2026 Goals -->
+      <section class="about-section">
+        <h2 class="about-section__title">🎯 2026 年目标</h2>
+        <div class="goals-list">
+          {[
+            { icon: '💼', text: '毕业进 AI 公司（优先初创）' },
+            { icon: '🚀', text: '完成至少 1 个 AI 独立项目' },
+            { icon: '📚', text: '英语六级通过' },
+            { icon: '💪', text: '健身增肌，体重增至 75kg' },
+            { icon: '✍️', text: '持续内容输出，公众号 300 篇' },
+          ].map(({ icon, text }) => (
+            <div class="goal-item">
+              <span class="goal-item__icon">{icon}</span>
+              <span>{text}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section class="about-section">
+        <h2 class="about-section__title">📬 联系我</h2>
+        <div class="contact-links">
+          <a
+            href="https://github.com/changqingws0506a"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-link"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="mailto:sunsetjhoney@gmail.com" class="contact-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            邮件联系
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.about-page { padding: 2.5rem 0 4rem; }
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.profile__avatar {
+  font-size: 5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.profile__name {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+.profile__tagline {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+.profile__badges {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.divider {
+  border: none;
+  border-top: 2px solid var(--border);
+  margin: 2rem 0;
+}
+
+.about-section { margin-bottom: 2.5rem; }
+.about-section__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+.stat-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.stat-card__num {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.stat-card__label {
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.skill-group__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 0.6rem;
+}
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.goal-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+}
+.goal-item__icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.contact-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--text-2);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.contact-link:hover {
+  border-color: var(--green);
+  color: var(--green-dark);
+  background: color-mix(in srgb, var(--green) 5%, var(--bg));
+}
+
+@media (max-width: 480px) {
+  .profile { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .profile__avatar { font-size: 3.5rem; }
+}
+</style>

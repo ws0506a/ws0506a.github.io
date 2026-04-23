@@ -1,0 +1,155 @@
+---
+const navLinks = [
+  { href: '/',        label: '首页' },
+  { href: '/posts',   label: '文章' },
+  { href: '/about',   label: '关于' },
+];
+
+const pathname = Astro.url.pathname;
+---
+
+<header class="header">
+  <div class="header__inner container--wide">
+    <a href="/" class="header__logo">
+      <span class="header__logo-icon">⚡</span>
+      <span class="header__logo-text">AI成长引擎</span>
+    </a>
+
+    <!-- 移动端菜单切换（纯CSS） -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-hamburger" aria-label="打开菜单">
+      <span></span><span></span><span></span>
+    </label>
+
+    <nav class="header__nav" aria-label="主导航">
+      {navLinks.map(({ href, label }) => {
+        const isActive = href === '/'
+          ? pathname === '/'
+          : pathname.startsWith(href);
+        return (
+          <a
+            href={href}
+            class:list={['header__nav-link', { 'header__nav-link--active': isActive }]}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            {label}
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+</header>
+
+<style>
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  height: 4rem;
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.header__logo:hover { color: var(--green-dark); }
+
+.header__logo-icon {
+  font-size: 1.25rem;
+  filter: hue-rotate(40deg);
+}
+
+.header__logo-text {
+  background: linear-gradient(135deg, var(--green-dark), var(--blue-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.header__nav-link {
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.header__nav-link:hover {
+  color: var(--green-dark);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+}
+.header__nav-link--active {
+  color: var(--green-dark);
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+  font-weight: 600;
+}
+
+/* 隐藏 checkbox 开关 */
+.nav-toggle { display: none; }
+.nav-hamburger { display: none; }
+
+@media (max-width: 600px) {
+  .nav-hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0.5rem;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-2);
+    border-radius: 2px;
+    transition: all 0.25s;
+  }
+
+  .header__nav {
+    display: none;
+    position: absolute;
+    top: 4rem;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    margin-left: 0;
+    box-shadow: var(--shadow-md);
+  }
+
+  .nav-toggle:checked ~ nav {
+    display: flex;
+  }
+
+  .nav-toggle:checked + label span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle:checked + label span:nth-child(2) { opacity: 0; }
+  .nav-toggle:checked + label span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}
+</style>
