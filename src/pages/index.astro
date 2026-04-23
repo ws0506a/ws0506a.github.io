@@ -5,9 +5,8 @@ import { getCollection } from 'astro:content';
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
 const recentPosts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 5);
+  .slice(0, 4);
 
-// 统计数据
 const totalPosts = allPosts.length;
 const allTags = [...new Set(allPosts.flatMap(p => p.data.tags))];
 const allCategories = [...new Set(allPosts.map(p => p.data.category))];
@@ -17,316 +16,314 @@ const categoryColors: Record<string, string> = {
 };
 ---
 
-<BaseLayout title="首页" description="晨思 — 退伍大学生 × AI × 成长系统">
+<BaseLayout title="首页">
 
-  <!-- Hero -->
+  <!-- ===== 全屏星空 Hero ===== -->
   <section class="hero">
-    <div class="hero__stars" aria-hidden="true"></div>
+    <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
+
+    <!-- 星云光晕 -->
+    <div class="nebula nebula--1" aria-hidden="true"></div>
+    <div class="nebula nebula--2" aria-hidden="true"></div>
+    <div class="nebula nebula--3" aria-hidden="true"></div>
+
     <div class="hero__content">
       <div class="hero__avatar" aria-hidden="true">🎖️</div>
-      <h1 class="hero__name">晨思</h1>
-      <p class="hero__tagline">退伍老兵 · 电子信息工程 · AI 自学者</p>
-      <p class="hero__desc">
-        用系统化思维，在 AI 时代构建个人竞争力<br />
-        记录学习、复盘成长、输出思考
+      <h1 class="hero__title">
+        你好，我是 <span class="hero__name-accent">晨思</span>
+      </h1>
+      <p class="hero__sub">
+        退伍老兵 · 电子信息工程 · AI 开发者
       </p>
-      <div class="hero__actions">
-        <a href="/posts" class="btn btn--primary">浏览文章</a>
-        <a href="/about" class="btn btn--ghost">关于我</a>
+      <p class="hero__desc">
+        用系统化思维构建 AI 时代的个人竞争力<br />
+        这里记录我的学习、项目与成长
+      </p>
+      <div class="hero__cta">
+        <a href="/posts" class="btn-primary">阅读文章</a>
+        <a href="/projects" class="btn-ghost">查看项目</a>
       </div>
     </div>
 
-    <!-- 统计栏（参考 daydust）-->
-    <div class="hero__stats">
-      <a href="/posts" class="hero__stat">
-        <span class="hero__stat-num">{totalPosts}</span>
-        <span class="hero__stat-label">文章</span>
-      </a>
-      <div class="hero__stat-divider"></div>
-      <a href="/categories" class="hero__stat">
-        <span class="hero__stat-num">{allCategories.length}</span>
-        <span class="hero__stat-label">分类</span>
-      </a>
-      <div class="hero__stat-divider"></div>
-      <a href="/tags" class="hero__stat">
-        <span class="hero__stat-num">{allTags.length}</span>
-        <span class="hero__stat-label">标签</span>
-      </a>
-      <div class="hero__stat-divider"></div>
-      <div class="hero__stat">
-        <span class="hero__stat-num">280+</span>
-        <span class="hero__stat-label">日课天</span>
-      </div>
-    </div>
-
-    <div class="hero__scroll" aria-hidden="true">↓</div>
-  </section>
-
-  <!-- Recent Posts -->
-  <section class="section">
-    <div class="container">
-      <div class="section__header">
-        <h2 class="section__title">最近文章</h2>
-        <a href="/posts" class="section__more">全部文章 →</a>
-      </div>
-
-      {recentPosts.length === 0 ? (
-        <p class="empty">文章正在路上，敬请期待 🚀</p>
-      ) : (
-        <div class="post-list">
-          {recentPosts.map(post => (
-            <article class="post-card">
-              <div class="post-card__header">
-                <div class="post-card__meta">
-                  <span class={`badge badge--${categoryColors[post.data.category] ?? 'gray'}`}>
-                    {post.data.category}
-                  </span>
-                  <time datetime={post.data.pubDate.toISOString()} class="post-card__date">
-                    {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
-                  </time>
-                </div>
-                {post.data.featured && <span class="post-card__featured">精选</span>}
-              </div>
-              <h3 class="post-card__title">
-                <a href={`/posts/${post.id}`}>{post.data.title}</a>
-              </h3>
-              <p class="post-card__desc">{post.data.description}</p>
-              {post.data.tags.length > 0 && (
-                <div class="post-card__tags">
-                  {post.data.tags.slice(0, 4).map(tag => (
-                    <a href={`/tags/${tag}`} class="post-card__tag">#{tag}</a>
-                  ))}
-                </div>
-              )}
-            </article>
-          ))}
-        </div>
-      )}
+    <!-- 滚动提示 -->
+    <div class="scroll-hint" aria-hidden="true">
+      <span class="scroll-hint__line"></span>
+      <span class="scroll-hint__text">向下滚动</span>
     </div>
   </section>
 
-  <!-- About snippet -->
+  <!-- ===== 统计条 ===== -->
+  <div class="stats-bar">
+    <div class="container--wide">
+      <div class="stats-bar__inner">
+        <a href="/posts" class="stat">
+          <span class="stat__num">{totalPosts}</span>
+          <span class="stat__label">篇文章</span>
+        </a>
+        <div class="stat-sep"></div>
+        <a href="/categories" class="stat">
+          <span class="stat__num">{allCategories.length}</span>
+          <span class="stat__label">个分类</span>
+        </a>
+        <div class="stat-sep"></div>
+        <a href="/tags" class="stat">
+          <span class="stat__num">{allTags.length}</span>
+          <span class="stat__label">个标签</span>
+        </a>
+        <div class="stat-sep"></div>
+        <div class="stat">
+          <span class="stat__num">429</span>
+          <span class="stat__label">次反思</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 最新文章 ===== -->
   <section class="section">
     <div class="container">
-      <div class="about-card">
-        <div class="about-card__left">
-          <span class="about-card__emoji">🎖️</span>
-        </div>
-        <div class="about-card__right">
-          <h2 class="about-card__title">关于我</h2>
-          <p class="about-card__text">
-            电子信息工程大三，2024 年 3 月退役。专注 AI 开发，目标毕业入职 AI 初创公司。
-            公众号「AI成长引擎」230+ 篇，总阅读 3.6 万。
-          </p>
-          <div class="about-card__links">
-            <a href="/about" class="about-link">了解更多 →</a>
-            <a href="https://github.com/ws0506a" target="_blank" rel="noopener" class="about-link about-link--dim">GitHub ↗</a>
-          </div>
-        </div>
+      <div class="sec-header">
+        <h2 class="sec-title">最新文章</h2>
+        <a href="/posts" class="sec-more">全部 →</a>
+      </div>
+      <div class="posts-grid">
+        {recentPosts.map(post => (
+          <a href={`/posts/${post.id}`} class="post-card">
+            <div class="post-card__top">
+              <span class={`badge badge--${categoryColors[post.data.category] ?? 'gray'}`}>
+                {post.data.category}
+              </span>
+              <time class="post-card__date" datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}
+              </time>
+            </div>
+            <h3 class="post-card__title">{post.data.title}</h3>
+            <p class="post-card__desc">{post.data.description}</p>
+            <div class="post-card__arrow">阅读 →</div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
 
 </BaseLayout>
 
+<!-- 星空 canvas 脚本 -->
+<script>
+const canvas = document.getElementById('starfield') as HTMLCanvasElement;
+if (canvas) {
+  const ctx = canvas.getContext('2d')!;
+  let stars: { x: number; y: number; r: number; o: number; speed: number }[] = [];
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    const count = Math.floor((canvas.width * canvas.height) / 3000);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x:     Math.random() * canvas.width,
+        y:     Math.random() * canvas.height,
+        r:     Math.random() * 1.4 + 0.2,
+        o:     Math.random() * 0.8 + 0.2,
+        speed: Math.random() * 0.008 + 0.002,
+      });
+    }
+  }
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frame += 0.01;
+    for (const s of stars) {
+      const opacity = s.o * (0.6 + 0.4 * Math.sin(frame * s.speed * 100));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+
+      // 亮星加十字光芒
+      if (s.r > 1.2) {
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `rgba(200,220,255,${opacity * 0.8})`;
+      } else {
+        ctx.shadowBlur = 3;
+        ctx.shadowColor = `rgba(200,220,255,${opacity * 0.4})`;
+      }
+      ctx.fillStyle = `rgba(210,225,255,${opacity})`;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initStars();
+  draw();
+  window.addEventListener('resize', () => { resize(); initStars(); });
+}
+</script>
+
 <style>
 /* ===== Hero ===== */
 .hero {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 6rem 1.25rem 8rem;
-  overflow: hidden;
+  width: 100%; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; background: #000;
 }
 
-.hero__stars {
+.starfield {
   position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(74,222,128,0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(96,165,250,0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(74,222,128,0.03) 0%, transparent 40%);
+  width: 100%; height: 100%;
+  pointer-events: none;
 }
-.hero__stars::before, .hero__stars::after {
-  content: ''; position: absolute; inset: 0;
-  background-image:
-    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 85% 5%,  rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,0.4) 0%, transparent 100%);
+
+/* 星云光晕 */
+.nebula {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); pointer-events: none;
 }
-.hero__stars::after {
-  background-image:
-    radial-gradient(1px 1px at 18% 8%,  rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 45% 42%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 72% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 88% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 62% 18%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 5%  90%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 95% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 50% 5%,  rgba(74,222,128,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 76% 48%, rgba(96,165,250,0.5) 0%, transparent 100%);
+.nebula--1 {
+  width: 600px; height: 400px;
+  top: 10%; left: 15%;
+  background: radial-gradient(ellipse, rgba(124,58,237,0.18) 0%, transparent 70%);
+}
+.nebula--2 {
+  width: 500px; height: 350px;
+  bottom: 15%; right: 10%;
+  background: radial-gradient(ellipse, rgba(34,197,94,0.12) 0%, transparent 70%);
+}
+.nebula--3 {
+  width: 400px; height: 300px;
+  top: 40%; left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(96,165,250,0.08) 0%, transparent 70%);
 }
 
 .hero__content {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 1rem; padding: 2rem 1.5rem;
 }
 
-.hero__avatar { font-size: 4.5rem; line-height: 1; filter: drop-shadow(0 0 20px rgba(74,222,128,0.3)); }
+.hero__avatar { font-size: 4rem; line-height: 1; margin-bottom: 0.5rem; }
 
-.hero__name {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 900; letter-spacing: 0.08em;
-  color: var(--text); text-shadow: 0 0 30px rgba(74,222,128,0.2);
+.hero__title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800; letter-spacing: -0.02em;
+  color: var(--text); line-height: 1.15;
 }
 
-.hero__tagline { font-size: 0.95rem; color: var(--text-2); letter-spacing: 0.04em; }
+.hero__name-accent {
+  background: linear-gradient(135deg, #4ade80 0%, #60a5fa 50%, #a78bfa 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-.hero__desc { font-size: 0.9rem; color: var(--text-2); line-height: 1.8; max-width: 380px; }
+.hero__sub {
+  font-size: 0.95rem; color: var(--text-3);
+  letter-spacing: 0.05em;
+}
 
-.hero__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; margin-top: 0.4rem; }
+.hero__desc {
+  font-size: 1rem; color: var(--text-2);
+  line-height: 1.8; max-width: 420px;
+}
 
-.btn {
-  display: inline-flex; align-items: center;
-  padding: 0.55rem 1.25rem;
-  border-radius: var(--radius-md);
+.hero__cta { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem; }
+
+.btn-primary {
+  padding: 0.6rem 1.5rem; border-radius: var(--radius-md);
   font-size: 0.875rem; font-weight: 600;
-  text-decoration: none; transition: all 0.2s;
-  border: 1px solid transparent;
+  background: var(--text); color: var(--bg);
+  transition: opacity 0.2s, transform 0.2s;
 }
-.btn--primary {
-  background: var(--green-dark); color: #0d1117;
-  box-shadow: 0 0 16px rgba(34,197,94,0.25);
-}
-.btn--primary:hover { background: var(--green); transform: translateY(-1px); color: #0d1117; }
-.btn--ghost { border-color: var(--border-2); color: var(--text-2); }
-.btn--ghost:hover { border-color: var(--green-dark); color: var(--green); }
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
 
-/* 统计栏 */
-.hero__stats {
-  position: relative; z-index: 1;
-  display: inline-flex; align-items: center; gap: 0;
+.btn-ghost {
+  padding: 0.6rem 1.5rem; border-radius: var(--radius-md);
+  font-size: 0.875rem; font-weight: 600;
+  border: 1px solid var(--border-2); color: var(--text-2);
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover { border-color: var(--text-3); color: var(--text); }
+
+/* 滚动提示 */
+.scroll-hint {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+}
+.scroll-hint__line {
+  display: block; width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--text-3));
+  animation: drop 1.8s ease-in-out infinite;
+}
+.scroll-hint__text { font-size: 0.65rem; color: var(--text-3); letter-spacing: 0.15em; text-transform: uppercase; }
+@keyframes drop { 0%,100%{opacity:0; transform:scaleY(0); transform-origin:top;} 50%{opacity:1; transform:scaleY(1);} }
+
+/* ===== Stats Bar ===== */
+.stats-bar {
   background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stats-bar__inner {
+  display: flex; align-items: center;
+  justify-content: center; flex-wrap: wrap;
+  padding: 1.25rem 0;
+}
+.stat {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0.25rem 2.5rem; gap: 0.15rem;
+  text-decoration: none; transition: opacity 0.15s;
+}
+a.stat:hover { opacity: 0.75; }
+.stat__num { font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1; }
+.stat__label { font-size: 0.7rem; color: var(--text-3); letter-spacing: 0.08em; }
+.stat-sep { width: 1px; height: 2rem; background: var(--border); }
+
+/* ===== Section ===== */
+.section { padding: 5rem 0; }
+
+.sec-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2rem; }
+.sec-title { font-size: 0.7rem; font-weight: 700; color: var(--text-3); letter-spacing: 0.15em; text-transform: uppercase; }
+.sec-more { font-size: 0.8rem; color: var(--text-3); transition: color 0.15s; }
+.sec-more:hover { color: var(--text); }
+
+/* ===== Post Cards — Linear style ===== */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1px;
+  background: var(--border);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  margin-top: 2.5rem;
+  border-radius: var(--radius-xl);
   overflow: hidden;
 }
-.hero__stat {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 0.9rem 1.75rem; gap: 0.2rem;
-  text-decoration: none; transition: background 0.15s;
-  cursor: default;
-}
-a.hero__stat:hover { background: var(--bg-3); }
-.hero__stat-num {
-  font-size: 1.5rem; font-weight: 800; line-height: 1;
-  color: var(--green);
-}
-.hero__stat-label { font-size: 0.72rem; color: var(--text-3); letter-spacing: 0.05em; }
-.hero__stat-divider { width: 1px; height: 2.5rem; background: var(--border); flex-shrink: 0; }
-
-.hero__scroll {
-  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-  color: var(--text-3); font-size: 1.1rem;
-  animation: bounce 2.2s ease-in-out infinite;
-}
-@keyframes bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
-  50%       { transform: translateX(-50%) translateY(7px); opacity: 1; }
-}
-
-/* ===== Sections ===== */
-.section { padding: 4rem 0; border-top: 1px solid var(--border); }
-
-.section__header {
-  display: flex; align-items: baseline;
-  justify-content: space-between; margin-bottom: 1.75rem;
-}
-.section__title {
-  font-size: 0.75rem; font-weight: 700;
-  color: var(--text-3); letter-spacing: 0.1em; text-transform: uppercase;
-}
-.section__more { font-size: 0.85rem; color: var(--green); font-weight: 500; }
-.section__more:hover { color: var(--green-light); }
-
-/* ===== Post Cards（参考 rain1andsnow2a 风格 + daydust 信息密度）===== */
-.post-list { display: flex; flex-direction: column; gap: 0; }
 
 .post-card {
-  padding: 1.25rem 0;
-  border-bottom: 1px solid var(--border);
-  display: flex; flex-direction: column; gap: 0.5rem;
-  transition: all 0.15s;
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 1.5rem; background: var(--bg-2);
+  transition: background 0.15s;
+  text-decoration: none;
 }
-.post-card:last-child { border-bottom: none; }
-.post-card:hover { padding-left: 0.5rem; }
+.post-card:hover { background: var(--bg-3); }
 
-.post-card__header {
-  display: flex; align-items: center;
-  justify-content: space-between; gap: 0.75rem;
-}
-.post-card__meta { display: flex; align-items: center; gap: 0.5rem; }
-.post-card__date { font-size: 0.78rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
-.post-card__featured {
-  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
-  color: var(--green); border: 1px solid rgba(74,222,128,0.3);
-  padding: 0.1rem 0.4rem; border-radius: var(--radius-sm);
-}
+.post-card__top { display: flex; align-items: center; justify-content: space-between; }
+.post-card__date { font-size: 0.72rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
 
-.post-card__title { font-size: 1rem; font-weight: 700; line-height: 1.4; }
-.post-card__title a { color: var(--text); text-decoration: none; transition: color 0.15s; }
-.post-card__title a:hover { color: var(--green); }
-
+.post-card__title { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.45; }
 .post-card__desc {
-  font-size: 0.85rem; color: var(--text-2); line-height: 1.65;
-  display: -webkit-box; -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; overflow: hidden;
+  font-size: 0.8rem; color: var(--text-3); line-height: 1.6; flex: 1;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
+.post-card__arrow { font-size: 0.75rem; color: var(--text-3); margin-top: 0.5rem; transition: color 0.15s; }
+.post-card:hover .post-card__arrow { color: var(--green); }
 
-.post-card__tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-.post-card__tag {
-  font-size: 0.72rem; color: var(--text-3);
-  text-decoration: none; transition: color 0.15s;
-}
-.post-card__tag:hover { color: var(--green); }
-
-/* ===== About Card ===== */
-.about-card {
-  display: flex; gap: 1.5rem; align-items: flex-start;
-  background: var(--bg-2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 1.75rem;
-}
-.about-card__left { font-size: 3rem; line-height: 1; flex-shrink: 0; }
-.about-card__title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
-.about-card__text { font-size: 0.875rem; color: var(--text-2); line-height: 1.75; margin-bottom: 1rem; }
-.about-card__links { display: flex; gap: 1.25rem; }
-.about-link { font-size: 0.85rem; font-weight: 600; color: var(--green); }
-.about-link--dim { color: var(--text-3); }
-.about-link--dim:hover { color: var(--text-2); }
-
-.empty { color: var(--text-3); font-size: 0.9rem; padding: 2rem 0; }
-
-:global(.main-content) { padding-top: 3.5rem; }
-
-@media (max-width: 560px) {
-  .hero__stats { flex-wrap: wrap; justify-content: center; border-radius: var(--radius-md); }
-  .hero__stat { padding: 0.75rem 1.25rem; }
-  .hero__stat-divider { display: none; }
-  .about-card { flex-direction: column; gap: 0.75rem; padding: 1.25rem; }
-  .about-card__left { font-size: 2rem; }
+@media (max-width: 600px) {
+  .stat { padding: 0.25rem 1.5rem; }
+  .posts-grid { grid-template-columns: 1fr; }
 }
 </style>

@@ -1,153 +1,104 @@
-/* ===== CSS Variables — Dark Space Theme ===== */
+/* ===== CSS Variables — Linear Dark ===== */
 :root {
   --green:       #4ade80;
-  --green-light: #86efac;
   --green-dark:  #22c55e;
   --blue:        #60a5fa;
-  --blue-light:  #93c5fd;
-  --blue-dark:   #3b82f6;
+  --purple:      #a78bfa;
+  --purple-dark: #7c3aed;
 
-  --bg:          #0d1117;
-  --bg-2:        #161b22;
-  --bg-3:        #1c2128;
-  --bg-card:     #161b22;
+  --bg:          #000000;
+  --bg-2:        #0a0a0a;
+  --bg-3:        #111111;
+  --bg-card:     #0f0f0f;
 
-  --text:        #e6edf3;
-  --text-2:      #8b949e;
-  --text-3:      #484f58;
+  --text:        #ffffff;
+  --text-2:      #a1a1aa;
+  --text-3:      #52525b;
 
-  --border:      #30363d;
-  --border-2:    #3d444d;
+  --border:      #1f1f1f;
+  --border-2:    #2a2a2a;
 
   --font-sans: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px rgba(74, 222, 128, 0.15);
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
 }
 
 /* ===== Reset ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.75;
   color: var(--text);
-  background-color: var(--bg);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
 
 img, video { max-width: 100%; height: auto; display: block; }
-a { color: var(--green); text-decoration: none; transition: color 0.15s; }
-a:hover { color: var(--green-light); }
-button { cursor: pointer; font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
 
 /* ===== Layout ===== */
-.container      { max-width: 760px;  margin: 0 auto; padding: 0 1.25rem; }
-.container--wide { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+.container       { max-width: 760px;  margin: 0 auto; padding: 0 1.5rem; }
+.container--wide { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
 
 /* ===== Badges ===== */
 .badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.15rem 0.55rem;
+  display: inline-flex; align-items: center;
+  padding: 0.12rem 0.5rem;
   border-radius: var(--radius-sm);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
   white-space: nowrap;
 }
-.badge--green {
-  background: rgba(74, 222, 128, 0.1);
-  color: var(--green);
-  border: 1px solid rgba(74, 222, 128, 0.2);
-}
-.badge--blue {
-  background: rgba(96, 165, 250, 0.1);
-  color: var(--blue);
-  border: 1px solid rgba(96, 165, 250, 0.2);
-}
-.badge--gray {
-  background: var(--bg-3);
-  color: var(--text-2);
-  border: 1px solid var(--border);
-}
+.badge--green  { background: rgba(74,222,128,0.08); color: var(--green);  border: 1px solid rgba(74,222,128,0.15); }
+.badge--blue   { background: rgba(96,165,250,0.08); color: var(--blue);   border: 1px solid rgba(96,165,250,0.15); }
+.badge--purple { background: rgba(167,139,250,0.08); color: var(--purple); border: 1px solid rgba(167,139,250,0.15); }
+.badge--gray   { background: rgba(255,255,255,0.04); color: var(--text-2); border: 1px solid var(--border); }
 
 /* ===== Prose ===== */
-.prose { max-width: 68ch; color: var(--text); }
-
-.prose h1, .prose h2, .prose h3, .prose h4 {
-  line-height: 1.35; font-weight: 700; color: var(--text);
+.prose { max-width: 68ch; color: var(--text-2); }
+.prose h1,.prose h2,.prose h3,.prose h4 {
+  color: var(--text); font-weight: 700; line-height: 1.35;
   margin-top: 2rem; margin-bottom: 0.75rem;
 }
 .prose h1 { font-size: 1.875rem; }
 .prose h2 { font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
 .prose h3 { font-size: 1.25rem; }
-
 .prose p { margin-bottom: 1.25rem; }
 .prose a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
-.prose a:hover { color: var(--green-light); }
-.prose strong { font-weight: 700; color: var(--text); }
-
-.prose ul, .prose ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.prose a:hover { color: var(--green-dark); }
+.prose strong { color: var(--text); font-weight: 700; }
+.prose ul,.prose ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
 .prose li { margin-bottom: 0.25rem; }
-
 .prose blockquote {
-  border-left: 3px solid var(--green-dark);
-  padding: 0.75rem 1.25rem;
-  margin: 1.5rem 0;
-  background: rgba(74, 222, 128, 0.05);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  color: var(--text-2);
-  font-style: italic;
+  border-left: 2px solid var(--green-dark); padding: 0.75rem 1.25rem;
+  margin: 1.5rem 0; background: rgba(74,222,128,0.03);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0; color: var(--text-2); font-style: italic;
 }
-
 .prose code:not(pre code) {
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.15em 0.4em;
-  color: var(--green);
+  font-family: var(--font-mono); font-size: 0.875em;
+  background: var(--bg-3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.15em 0.4em; color: var(--green);
 }
-
 .prose pre {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  background: var(--bg-2) !important;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  overflow-x: auto;
-  margin-bottom: 1.5rem;
+  font-family: var(--font-mono); font-size: 0.875rem;
+  background: var(--bg-2) !important; border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 1.25rem; overflow-x: auto; margin-bottom: 1.5rem;
 }
-
 .prose hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-
 .prose table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
-.prose th { background: var(--bg-2); border: 1px solid var(--border); padding: 0.6rem 1rem; text-align: left; font-weight: 600; }
+.prose th { background: var(--bg-2); border: 1px solid var(--border); padding: 0.6rem 1rem; font-weight: 600; }
 .prose td { border: 1px solid var(--border); padding: 0.6rem 1rem; }
-.prose tr:nth-child(even) td { background: var(--bg-2); }
-
-.prose img { border-radius: var(--radius-md); margin: 1.5rem auto; }
-
-/* KaTeX */
 .prose .katex-display { overflow-x: auto; padding: 0.5rem 0; margin: 1.5rem 0; }
 
-/* ===== Utilities ===== */
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
-}
+/* ===== Main offset ===== */
+.main-content { padding-top: 3.5rem; }
 
 @media (max-width: 640px) {
   .prose h1 { font-size: 1.5rem; }

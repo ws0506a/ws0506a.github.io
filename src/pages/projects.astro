@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    name: 'AI成长引擎',
+    desc: '公众号内容体系，聚焦「退伍大学生 × AI × 成长系统」，230+ 篇原创文章，总阅读 3.6 万。',
+    tags: ['内容创作', 'AI', '个人品牌'],
+    color: 'green',
+    status: '持续更新',
+    link: null,
+  },
+  {
+    name: '个人知识库 PKM',
+    desc: '基于 Obsidian 的个人知识管理系统，1400+ 条 Flomo 笔记归档，结构化反思日志 429 次。',
+    tags: ['Obsidian', 'PKM', 'Markdown'],
+    color: 'blue',
+    status: '持续迭代',
+    link: null,
+  },
+  {
+    name: '个人博客',
+    desc: '基于 Astro 6 + Preact + KaTeX 搭建，支持数学公式渲染，部署于 GitHub Pages，完整 CI/CD 流水线。',
+    tags: ['Astro', 'Preact', 'GitHub Actions'],
+    color: 'purple',
+    status: '已上线',
+    link: 'https://github.com/ws0506a/ws0506a.github.io',
+  },
+  {
+    name: 'AI Agent 探索',
+    desc: '学习构建基于 LangChain 的 Agent 系统，探索 RAG 检索增强生成在个人知识库上的应用。',
+    tags: ['Python', 'LangChain', 'RAG'],
+    color: 'blue',
+    status: '进行中',
+    link: null,
+  },
+];
+
+const colorMap: Record<string, string> = {
+  green: 'badge--green',
+  blue:  'badge--blue',
+  purple:'badge--purple',
+};
+
+const statusColor: Record<string, string> = {
+  '已上线':   '#4ade80',
+  '持续更新': '#60a5fa',
+  '持续迭代': '#60a5fa',
+  '进行中':   '#a78bfa',
+};
+---
+
+<BaseLayout title="项目" description="我的项目和作品">
+  <div class="page">
+    <div class="container">
+
+      <header class="page-header">
+        <p class="page-header__eyebrow">PROJECTS</p>
+        <h1 class="page-header__title">项目 & 作品</h1>
+        <p class="page-header__desc">
+          这里是我正在构建或已完成的项目，涵盖 AI 开发、内容创作和工具搭建。
+        </p>
+      </header>
+
+      <div class="projects-grid">
+        {projects.map(p => (
+          <div class="proj-card">
+            <div class="proj-card__top">
+              <div class="proj-card__name-row">
+                <h2 class="proj-card__name">{p.name}</h2>
+                <span class="proj-card__status" style={`color: ${statusColor[p.status]}`}>
+                  <span class="proj-card__dot" style={`background: ${statusColor[p.status]}`}></span>
+                  {p.status}
+                </span>
+              </div>
+              <p class="proj-card__desc">{p.desc}</p>
+            </div>
+            <div class="proj-card__bottom">
+              <div class="proj-card__tags">
+                {p.tags.map(t => (
+                  <span class={`badge ${colorMap[p.color]}`}>{t}</span>
+                ))}
+              </div>
+              {p.link && (
+                <a href={p.link} target="_blank" rel="noopener" class="proj-card__link">
+                  查看 ↗
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="wip-note">
+        <span class="wip-note__icon">🚧</span>
+        更多项目正在开发中，敬请期待
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.page { padding: 5rem 0 6rem; }
+
+.page-header { margin-bottom: 3.5rem; }
+.page-header__eyebrow {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em;
+  color: var(--text-3); margin-bottom: 0.75rem;
+}
+.page-header__title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
+  color: var(--text); letter-spacing: -0.02em; line-height: 1.2;
+  margin-bottom: 1rem;
+}
+.page-header__desc { font-size: 0.95rem; color: var(--text-2); max-width: 480px; line-height: 1.75; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.proj-card {
+  background: var(--bg-2); padding: 1.75rem;
+  display: flex; flex-direction: column; gap: 1.25rem;
+  transition: background 0.15s;
+}
+.proj-card:hover { background: var(--bg-3); }
+
+.proj-card__top { flex: 1; display: flex; flex-direction: column; gap: 0.75rem; }
+
+.proj-card__name-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.proj-card__name { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+
+.proj-card__status {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.7rem; font-weight: 600; white-space: nowrap; flex-shrink: 0;
+}
+.proj-card__dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.proj-card__desc { font-size: 0.85rem; color: var(--text-2); line-height: 1.7; }
+
+.proj-card__bottom { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.proj-card__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.proj-card__link { font-size: 0.75rem; color: var(--text-3); transition: color 0.15s; white-space: nowrap; }
+.proj-card__link:hover { color: var(--text); }
+
+.wip-note {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem; color: var(--text-3);
+}
+
+@media (max-width: 600px) {
+  .projects-grid { grid-template-columns: 1fr; }
+}
+</style>

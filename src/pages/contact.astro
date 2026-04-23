@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const contacts = [
+  {
+    label: 'GitHub',
+    value: '@ws0506a',
+    href: 'https://github.com/ws0506a',
+    desc: '代码仓库 & 项目',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844a9.59 9.59 0 012.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>`,
+  },
+  {
+    label: 'Email',
+    value: 'sunsetjhoney@gmail.com',
+    href: 'mailto:sunsetjhoney@gmail.com',
+    desc: '学习交流 & 合作',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>`,
+  },
+];
+---
+
+<BaseLayout title="联系" description="联系方式">
+  <div class="page">
+    <div class="container">
+
+      <header class="page-header">
+        <p class="eyebrow">CONTACT</p>
+        <h1 class="title">联系我</h1>
+        <p class="desc">
+          欢迎技术交流、学习探讨或合作机会。<br />
+          通常在 24 小时内回复。
+        </p>
+      </header>
+
+      <div class="contacts">
+        {contacts.map(c => (
+          <a href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined}
+             rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+             class="contact-card">
+            <div class="contact-card__icon" set:html={c.icon}></div>
+            <div class="contact-card__body">
+              <div class="contact-card__label">{c.label}</div>
+              <div class="contact-card__value">{c.value}</div>
+              <div class="contact-card__desc">{c.desc}</div>
+            </div>
+            <div class="contact-card__arrow">↗</div>
+          </a>
+        ))}
+      </div>
+
+      <div class="note">
+        <h2 class="note__title">关于我</h2>
+        <p class="note__text">
+          电子信息工程大三在读，2024 年 3 月从部队退役。
+          目前自学 AI 开发，专注 LangChain / RAG / Agent 方向，
+          目标是毕业后加入 AI 初创公司。
+        </p>
+        <p class="note__text">
+          如果你也在做 AI 相关的事情，或者对「退伍 × AI × 成长系统」这个方向感兴趣，
+          很欢迎一起聊聊。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.page { padding: 5rem 0 6rem; }
+
+.page-header { margin-bottom: 3.5rem; }
+.eyebrow { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-3); margin-bottom: 0.75rem; }
+.title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
+  color: var(--text); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 1rem;
+}
+.desc { font-size: 0.95rem; color: var(--text-2); line-height: 1.75; }
+
+.contacts { display: flex; flex-direction: column; gap: 1px; margin-bottom: 3rem; }
+
+.contact-card {
+  display: flex; align-items: center; gap: 1.25rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+  margin-bottom: 0.75rem;
+}
+.contact-card:hover { background: var(--bg-3); border-color: var(--border-2); }
+
+.contact-card__icon { color: var(--text-3); flex-shrink: 0; display: flex; }
+.contact-card__body { flex: 1; min-width: 0; }
+.contact-card__label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 0.2rem; }
+.contact-card__value { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+.contact-card__desc { font-size: 0.78rem; color: var(--text-3); }
+.contact-card__arrow { font-size: 1.1rem; color: var(--text-3); transition: color 0.15s; }
+.contact-card:hover .contact-card__arrow { color: var(--text); }
+
+.note {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1.75rem; background: var(--bg-2);
+  display: flex; flex-direction: column; gap: 0.85rem;
+}
+.note__title { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.note__text { font-size: 0.875rem; color: var(--text-2); line-height: 1.75; }
+
+@media (max-width: 480px) {
+  .contact-card { padding: 1.25rem; }
+}
+</style>

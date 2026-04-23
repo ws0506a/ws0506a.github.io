@@ -1,113 +1,80 @@
 ---
 const navLinks = [
-  { href: '/',            label: '首页' },
-  { href: '/posts',       label: '文章' },
-  { href: '/categories',  label: '分类' },
-  { href: '/tags',        label: '标签' },
-  { href: 'https://github.com/ws0506a', label: 'GitHub', external: true },
+  { href: '/',          label: '首页' },
+  { href: '/posts',     label: '文章' },
+  { href: '/projects',  label: '项目' },
+  { href: '/contact',   label: '联系' },
 ];
-
 const pathname = Astro.url.pathname;
 ---
 
 <header class="header">
   <div class="header__inner container--wide">
-    <a href="/" class="header__logo">晨思</a>
-
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
-    <label for="nav-toggle" class="nav-hamburger" aria-label="菜单">
-      <span></span><span></span><span></span>
-    </label>
-
-    <nav class="header__nav" aria-label="主导航">
-      {navLinks.map(({ href, label, external }) => {
-        const isActive = !external && (href === '/' ? pathname === '/' : pathname.startsWith(href));
+    <a href="/" class="logo">晨思</a>
+    <nav class="nav">
+      {navLinks.map(({ href, label }) => {
+        const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
         return (
-          <a
-            href={href}
-            class:list={['header__nav-link', { 'header__nav-link--active': isActive }]}
-            target={external ? '_blank' : undefined}
-            rel={external ? 'noopener noreferrer' : undefined}
-            aria-current={isActive ? 'page' : undefined}
-          >
+          <a href={href} class:list={['nav__link', { 'nav__link--active': active }]}>
             {label}
           </a>
         );
       })}
     </nav>
+    <a href="https://github.com/ws0506a" target="_blank" rel="noopener" class="gh-link" aria-label="GitHub">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844a9.59 9.59 0 012.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+    </a>
+
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+    <label for="nav-toggle" class="hamburger">
+      <span/><span/><span/>
+    </label>
   </div>
 </header>
 
 <style>
 .header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 50;
-  background: rgba(13, 17, 23, 0.85);
-  backdrop-filter: blur(12px);
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border);
 }
-
 .header__inner {
-  display: flex;
-  align-items: center;
-  height: 3.5rem;
-  gap: 1.5rem;
+  display: flex; align-items: center; gap: 2rem; height: 3.5rem;
 }
-
-.header__logo {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text);
-  text-decoration: none;
-  flex-shrink: 0;
-  letter-spacing: 0.05em;
+.logo {
+  font-weight: 700; font-size: 1rem; color: var(--text);
+  letter-spacing: 0.06em; flex-shrink: 0;
 }
-.header__logo:hover { color: var(--green); }
-
-.header__nav {
-  display: flex;
-  align-items: center;
-  gap: 0.1rem;
-  margin-left: auto;
+.logo:hover { color: var(--text-2); }
+.nav { display: flex; gap: 0; margin-left: auto; }
+.nav__link {
+  padding: 0.35rem 0.75rem; border-radius: var(--radius-md);
+  font-size: 0.85rem; color: var(--text-3); font-weight: 500; transition: color 0.15s;
 }
-
-.header__nav-link {
-  padding: 0.35rem 0.75rem;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-2);
-  text-decoration: none;
-  transition: all 0.15s;
-}
-.header__nav-link:hover { color: var(--text); background: var(--bg-3); }
-.header__nav-link--active { color: var(--green); }
+.nav__link:hover { color: var(--text); }
+.nav__link--active { color: var(--text); }
+.gh-link { color: var(--text-3); transition: color 0.15s; display: flex; align-items: center; }
+.gh-link:hover { color: var(--text); }
 
 .nav-toggle { display: none; }
-.nav-hamburger { display: none; }
+.hamburger { display: none; }
 
-@media (max-width: 580px) {
-  .nav-hamburger {
-    display: flex; flex-direction: column; gap: 5px;
+@media (max-width: 560px) {
+  .nav, .gh-link { display: none; }
+  .hamburger {
+    display: flex; flex-direction: column; gap: 4px;
     cursor: pointer; margin-left: auto; padding: 0.5rem;
   }
-  .nav-hamburger span {
-    display: block; width: 20px; height: 2px;
-    background: var(--text-2); border-radius: 2px; transition: all 0.25s;
-  }
-  .header__nav {
-    display: none; position: fixed;
+  .hamburger span { display: block; width: 18px; height: 1.5px; background: var(--text-2); transition: all 0.2s; }
+  .nav-toggle:checked ~ * .nav,
+  .header__inner:has(.nav-toggle:checked) .nav {
+    display: flex; flex-direction: column; position: fixed;
     top: 3.5rem; left: 0; right: 0;
-    flex-direction: column; gap: 0;
-    background: var(--bg-2);
-    border-bottom: 1px solid var(--border);
-    padding: 0.5rem;
-    margin-left: 0;
+    background: var(--bg-2); border-bottom: 1px solid var(--border);
+    padding: 0.5rem; gap: 0;
   }
-  .nav-toggle:checked ~ nav { display: flex; }
-  .nav-toggle:checked + label span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .nav-toggle:checked + label span:nth-child(2) { opacity: 0; }
-  .nav-toggle:checked + label span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 }
 </style>
