@@ -5,7 +5,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
-  site: 'https://changqingws0506a.github.io',
+  site: 'https://ws0506a.github.io',
   integrations: [
     preact({ include: ['**/components/*.tsx'] }),
   ],
